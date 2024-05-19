@@ -2,7 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaTelemetryApp", "ForzaTelemetryApp\ForzaTelemetryApp.csproj", "{5BCFB8C3-08D0-4D8D-B01C-677A15FC5EBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaTelemetry.ForzaModels", "ForzaTelemetry.ForzaModels\ForzaTelemetry.ForzaModels.csproj", "{1688E4C8-66CA-4FAF-8164-9EEE923321B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaModels", "ForzaModels\ForzaModels.csproj", "{1688E4C8-66CA-4FAF-8164-9EEE923321B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaTest", "ForzaTest\ForzaTest.csproj", "{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaTelemetryUnitTests", "ForzaTelemetryUnitTests\ForzaTelemetryUnitTests.csproj", "{50C7847E-EA29-4159-A963-385E69BA1ED1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +22,13 @@ Global
 		{1688E4C8-66CA-4FAF-8164-9EEE923321B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1688E4C8-66CA-4FAF-8164-9EEE923321B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1688E4C8-66CA-4FAF-8164-9EEE923321B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

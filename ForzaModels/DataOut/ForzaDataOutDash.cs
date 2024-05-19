@@ -1,10 +1,7 @@
 ﻿namespace ForzaTelemetry.ForzaModels.DataOut;
 
 public class ForzaDataOutDash : IForzaDataOut {
-    public IForzaDataOut BuildPacket(ReadOnlySpan<byte> dataIn) =>
-        new ForzaDataOutDash();
-    
-    public bool IsRaceOn { get; set; }
+    public int IsRaceOn { get; set; }
     public uint TimestampMs { get; set; }
     public float EngineMaxRpm { get; set; }
     public float EngineIdleRpm { get; set; }
@@ -77,13 +74,13 @@ public class ForzaDataOutDash : IForzaDataOut {
     public int DrivetrainType { get; set; }
     public int CylinderCount { get; set; }
     
-    public int PositionX { get; set; }
-    public int PositionY { get; set; }
-    public int PositionZ { get; set; }
+    public float PositionX { get; set; }
+    public float PositionY { get; set; }
+    public float PositionZ { get; set; }
     
-    public int Speed { get; set; }
-    public int Power { get; set; }
-    public int Torque { get; set; }
+    public float Speed { get; set; }
+    public float Power { get; set; }
+    public float Torque { get; set; }
     
     public float TireTempFl { get; set; }
     public float TireTempFr { get; set; }
@@ -96,6 +93,7 @@ public class ForzaDataOutDash : IForzaDataOut {
     public float DistanceTraveled { get; set; }
     
     public float BestLap { get; set; }
+    public float LastLap { get; set; }
     public float CurrentLap { get; set; }
     public float CurrentRaceTime { get; set; }
     
@@ -107,8 +105,15 @@ public class ForzaDataOutDash : IForzaDataOut {
     public byte Clutch { get; set; }
     public byte HandBrake { get; set; }
     public byte Gear { get; set; }
-    public sbyte Steer { get; set; }
+    public byte Steer { get; set; }
     
-    public sbyte NormalizedDrivingLine { get; set; }
-    public sbyte NormalizedAiBrakeDiff { get; set; }
+    public byte NormalizedDrivingLine { get; set; }
+    public byte NormalizedAiBrakeDiff { get; set; }
+    
+    public float TireWearFl { get; set; }
+    public float TireWearFr { get; set; }
+    public float TireWearRl { get; set; }
+    public float TireWearRr { get; set; }
+    
+    public int TrackId { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿namespace ForzaTelemetry.ForzaModels.DataOut;
 
 public interface IForzaDataOut {
-    bool IsRaceOn { get; set; }
+    int IsRaceOn { get; set; }
     
     uint TimestampMs { get; set; }
     float EngineMaxRpm { get; set; }

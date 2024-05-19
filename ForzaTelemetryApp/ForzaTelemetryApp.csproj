@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ForzaTelemetry.ForzaModels\ForzaTelemetry.ForzaModels.csproj" />
+      <ProjectReference Include="..\ForzaModels\ForzaModels.csproj" />
     </ItemGroup>
 
 </Project>
