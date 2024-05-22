@@ -205,8 +205,4 @@ public abstract class ForzaFormatter : PacketFormatter {
             TrackId = ReadInt32(bytes, ref cursor)
         };
     }
-
-    // private bool ValidateBytes(in byte[] bytes) {
-    //     
-    // }
 }

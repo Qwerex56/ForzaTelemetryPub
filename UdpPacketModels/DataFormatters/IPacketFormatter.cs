@@ -8,7 +8,7 @@ public class PacketFormatter {
         return result;
     }
 
-    public static byte ReadInt8(in byte[] bytes, ref int cursor) {
+    public static sbyte ReadInt8(in byte[] bytes, ref int cursor) {
         var result = ParseInt8(bytes, cursor);
         cursor += sizeof(sbyte);
 
@@ -72,11 +72,13 @@ public class PacketFormatter {
     }
     
     public static byte ParseUInt8(in byte[] bytes, int startId) {
-        return Convert.ToByte(bytes[startId]);
+        var b = Convert.ToString(bytes[startId], 2).PadLeft(8, '0');
+        return Convert.ToByte(b, 2);
     }
 
-    public static byte ParseInt8(in byte[] bytes, int startId) {
-        return Convert.ToByte(bytes[startId]);
+    public static sbyte ParseInt8(in byte[] bytes, int startId) {
+        var b = Convert.ToString(bytes[startId], 2).PadLeft(8, '0');
+        return Convert.ToSByte(b, 2);
     }
 
     public static ushort ParseUInt16(byte[] bytes, int startId) {

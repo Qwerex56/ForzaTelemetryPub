@@ -105,10 +105,10 @@ public class ForzaDataOutDash : IForzaDataOut {
     public byte Clutch { get; set; }
     public byte HandBrake { get; set; }
     public byte Gear { get; set; }
-    public byte Steer { get; set; }
+    public sbyte Steer { get; set; }
     
-    public byte NormalizedDrivingLine { get; set; }
-    public byte NormalizedAiBrakeDiff { get; set; }
+    public sbyte NormalizedDrivingLine { get; set; }
+    public sbyte NormalizedAiBrakeDiff { get; set; }
     
     public float TireWearFl { get; set; }
     public float TireWearFr { get; set; }

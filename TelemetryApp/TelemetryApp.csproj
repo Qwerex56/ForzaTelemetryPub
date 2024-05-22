@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ForzaModels\ForzaModels.csproj" />
+      <ProjectReference Include="..\UdpPacketModels\UdpPacketModels.csproj" />
     </ItemGroup>
 
 </Project>

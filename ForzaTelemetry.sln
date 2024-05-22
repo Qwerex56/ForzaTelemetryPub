@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaModels", "ForzaModels\ForzaModels.csproj", "{1688E4C8-66CA-4FAF-8164-9EEE923321B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpPacketModels", "UdpPacketModels\UdpPacketModels.csproj", "{1688E4C8-66CA-4FAF-8164-9EEE923321B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelemetryApp", "TelemetryApp\TelemetryApp.csproj", "{55E6A42D-DF2C-4107-B2AA-D065AE5AE0EE}"
 EndProject
