@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\UdpDbModels\UdpDbModels.csproj" />
       <ProjectReference Include="..\UdpPacketModels\UdpPacketModels.csproj" />
     </ItemGroup>
 </Project>

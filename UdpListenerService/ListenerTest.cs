@@ -2,29 +2,43 @@ using System.Net;
 using System.Net.Sockets;
 using ForzaTelemetry.ForzaModels.DataFormatters;
 using ForzaTelemetry.ForzaModels.DataOut;
+using UdpDbModels;
 
 namespace UdpListenerService;
 
-public class ListenerTest(ILogger<ListenerTest> logger) : BackgroundService {
+public sealed class ListenerTest(ILogger<ListenerTest> logger)
+    : BackgroundService {
     private const int Delay = (int)(1f / 60 * 1000);
 
-    private static IPEndPoint _endPoint = new(IPAddress.Parse("192.168.0.255"), 8080);
+    private static IPEndPoint EndPoint = new(IPAddress.Parse("192.168.0.255"), 8080);
 
     private readonly UdpClient _udpClient = new(8080);
 
     public ForzaDataOutDash LastPacket { get; set; } = new();
-    
+
     public event Action? OnPacketSend;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-        while (!stoppingToken.IsCancellationRequested) {
-            var bytes = _udpClient.Receive(ref _endPoint);
+        // _udpClient.Connect(EndPoint);
 
-            if (!bytes.IsRaceOn()) continue;
+        while (!stoppingToken.IsCancellationRequested && false) {
+            // var result = await _udpClient.ReceiveAsync(stoppingToken);
+            // var buffer = result.Buffer;
+            var buffer = _udpClient.Receive(ref EndPoint);
 
-            var packet = ForzaFormatter.DataOutDash(ref bytes);
-            
+            if (!buffer.IsRaceOn()) {
+                await Task.Delay(Delay, stoppingToken);
+
+                continue;
+            }
+
+            var packet = ForzaFormatter.DataOutDash(ref buffer);
+
             if (packet.LapNumber <= LastPacket.LapNumber) continue;
+
+            if (logger.IsEnabled(LogLevel.Information)) {
+                logger.LogInformation($"Current: {packet.LapNumber}, Last: {LastPacket.LapNumber}");
+            }
 
             LastPacket = packet;
             // await using var dbContext = new TelemetryDbContext();
@@ -38,7 +52,19 @@ public class ListenerTest(ILogger<ListenerTest> logger) : BackgroundService {
             //
             // dbContext.LapData.Add(lap);
             // await dbContext.SaveChangesAsync(stoppingToken);
-            // OnPacketSend?.Invoke();
+            OnPacketSend?.Invoke();
+            await Task.Delay(Delay, stoppingToken);
+        }
+    }
+
+    public override void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing) {
+        if (disposing) {
+            _udpClient.Close();
         }
     }
 }

@@ -1,4 +1,7 @@
-using ForzaTest.Components;
+using TelemetryApp;
+using TelemetryApp.Components;
+using Microsoft.EntityFrameworkCore;
+using UdpDbModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,8 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
        .AddInteractiveServerComponents();
 
-// builder.Services.AddSingleton<ForzaTelemetry.ForzaModels.ForzaListener.ForzaListenerService>();
-builder.Services.AddHostedService<UdpListenerService.ListenerTest>();
+builder.Services.AddMvc();
+
+builder.Services.AddSingleton<UdpListenerService.ListenerTest>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<UdpListenerService.ListenerTest>());
+
+var connectionString = builder.Configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>();
+builder.Services.AddDbContext<ForzaTelemetryContext>(optionsBuilder =>
+    optionsBuilder.UseNpgsql(connectionString?.DevLocal));
 
 var app = builder.Build();
 
@@ -25,5 +34,9 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
    .AddInteractiveServerRenderMode();
+
+app.UseRouting();
+app.UseAntiforgery();
+app.MapDefaultControllerRoute();
 
 app.Run();

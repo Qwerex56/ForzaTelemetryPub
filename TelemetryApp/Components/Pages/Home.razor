@@ -1,7 +1,12 @@
 ﻿@page "/"
+@using System.Net.Sockets
+@using UdpDbModels
+
 @rendermode InteractiveServer
 
-@inject UdpListenerService.ListenerTest ListenerTest
+@implements IDisposable
+
+@inject UdpListenerService.ListenerTest UdpListener
 
 <PageTitle>Home</PageTitle>
 
@@ -9,26 +14,72 @@
 
 Welcome to your new app.
 
+<p @onclick="_source.Cancel">
+    Stop task
+</p>
+
+<p @onclick="RunTask">
+    Start task
+</p>
+
 <ol>
     @foreach (var lap in _lapData) {
         <li>
-            @lap
+            @lap.LapTime
         </li>
     }
 </ol>
 
 
 @code {
-    private readonly List<float> _lapData = [];
+    private readonly List<LapData> _lapData = [];
+
+    private CancellationTokenSource _source = new();
+    private CancellationToken _token;
+
+    private Task? _task;
 
     protected override void OnInitialized() {
-        ListenerTest.OnPacketSend += () => {
-            // using var dbContext = new TelemetryDbContext();
-            // _lapData = dbContext.LapData.ToList();
-            _lapData.Add(ListenerTest.LastPacket.CurrentLap);
-    
-            StateHasChanged();
-        };
+        UdpListener.OnPacketSend += FetchLapData;
+        _token = _source.Token;
+    }
+
+    public void Dispose() {
+        UdpListener.OnPacketSend -= FetchLapData;
+        Console.WriteLine($"Disposed {nameof(Home)}");
+    }
+
+    private async void FetchLapData() {
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void RunTask() {
+        _source = new();
+        _token = _source.Token;
+        
+        try {
+            await Task.Run(ListenToData, _token);
+        } catch (Exception e) {
+            Console.WriteLine(e);
+        }
+    }
+
+    private async void ListenToData() {
+        while (!_token.IsCancellationRequested) {
+            Console.WriteLine(DateTime.Now);
+            _lapData.Add(new());
+
+            await InvokeAsync(StateHasChanged);
+            
+            try {
+                await Task.Delay(1000, _token);
+            } catch (Exception) {
+                // ignored
+            }
+        }
+
+        Console.WriteLine($"Stopped at {DateTime.Now}");
     }
 
 }
