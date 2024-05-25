@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
        .AddInteractiveServerComponents();
 
-builder.Services.AddSingleton<ForzaTelemetry.ForzaModels.ForzaListener.ForzaListenerService>();
+// builder.Services.AddSingleton<ForzaTelemetry.ForzaModels.ForzaListener.ForzaListenerService>();
+builder.Services.AddHostedService<UdpListenerService.ListenerTest>();
 
 var app = builder.Build();
 

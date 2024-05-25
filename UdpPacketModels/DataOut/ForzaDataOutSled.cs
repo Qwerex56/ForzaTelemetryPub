@@ -1,6 +1,6 @@
 ﻿namespace ForzaTelemetry.ForzaModels.DataOut;
 
-public class ForzaDataOutSled : IForzaDataOut {
+public class ForzaDataOutSled {
     public int IsRaceOn { get; set; }
     
     public uint TimestampMs { get; set; }

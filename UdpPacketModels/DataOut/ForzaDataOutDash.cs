@@ -1,6 +1,6 @@
 ﻿namespace ForzaTelemetry.ForzaModels.DataOut;
 
-public class ForzaDataOutDash : IForzaDataOut {
+public class ForzaDataOutDash {
     public int IsRaceOn { get; set; }
     public uint TimestampMs { get; set; }
     public float EngineMaxRpm { get; set; }

@@ -1,32 +1,26 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using ForzaTelemetry.ForzaModels.ForzaListener
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
-<button @onclick="UpdateLapTimes">
-    update
-</button>
-
-<p>
-    RPM: @_rpm
-</p>
-
 Welcome to your new app.
 
 @code {
-    float _rpm;
-    readonly ForzaListenerService _fmListener = new();
-
-    async void UpdateLapTimes() {
-        while (true) {
-            _fmListener.ReceiverTask();
-            _rpm = _fmListener.rpm;
-            
-            await Task.Delay(100);
-        }
-    }
+    // float _rpm;
+    // readonly ForzaListenerService _fmListener = new();
+    //
+    // async void UpdateLapTimes() {
+    //     while (true) {
+    //         _fmListener.ReceiverTask();
+    //         _rpm = _fmListener.rpm;
+    //         
+    //         Console.WriteLine(_rpm);
+    //         StateHasChanged();
+    //         
+    //         await Task.Delay(1000);
+    //     }
+    // }
 
 }

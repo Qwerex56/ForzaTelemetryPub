@@ -12,13 +12,13 @@ public class ForzaListenerService {
 
         var result = udpClient.Receive(ref endPoint);
 
-        if (BitConverter.ToInt32(result[..4]) == 0) {
+        if (BitConverter.ToInt32(result.AsSpan()[..4]) == 0) {
             udpClient.Close();
             return;
         }
         
         // Console.WriteLine(result.Length);
-        var fmData = DataFormatters.ForzaFormatter.DataOutDash(result);
+        var fmData = DataFormatters.ForzaFormatter.DataOutDash(ref result);
         
         rpm = fmData.LastLap;
         
