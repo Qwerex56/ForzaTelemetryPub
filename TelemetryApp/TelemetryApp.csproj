@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\UdpListenerService\UdpListenerService.csproj" />
-      <ProjectReference Include="..\UdpPacketModels\UdpPacketModels.csproj" />
     </ItemGroup>
 
 </Project>

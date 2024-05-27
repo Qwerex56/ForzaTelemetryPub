@@ -4,6 +4,6 @@ namespace UdpDbModels;
 
 // TODO: Add connection string
 
-public class TelemetryDbContext(DbContextOptions<TelemetryDbContext> options) : DbContext(options) {
+public class TelemetryDbContext : DbContext {
     public DbSet<LapData> LapData { get; set; }
 }

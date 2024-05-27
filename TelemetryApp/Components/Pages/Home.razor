@@ -1,26 +1,34 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 
+@inject UdpListenerService.ListenerTest ListenerTest
+
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
+<ol>
+    @foreach (var lap in _lapData) {
+        <li>
+            @lap
+        </li>
+    }
+</ol>
+
+
 @code {
-    // float _rpm;
-    // readonly ForzaListenerService _fmListener = new();
-    //
-    // async void UpdateLapTimes() {
-    //     while (true) {
-    //         _fmListener.ReceiverTask();
-    //         _rpm = _fmListener.rpm;
-    //         
-    //         Console.WriteLine(_rpm);
-    //         StateHasChanged();
-    //         
-    //         await Task.Delay(1000);
-    //     }
-    // }
+    private readonly List<float> _lapData = [];
+
+    protected override void OnInitialized() {
+        ListenerTest.OnPacketSend += () => {
+            // using var dbContext = new TelemetryDbContext();
+            // _lapData = dbContext.LapData.ToList();
+            _lapData.Add(ListenerTest.LastPacket.CurrentLap);
+    
+            StateHasChanged();
+        };
+    }
 
 }

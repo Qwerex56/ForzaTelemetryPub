@@ -13,6 +13,8 @@ public class ListenerTest(ILogger<ListenerTest> logger) : BackgroundService {
     private readonly UdpClient _udpClient = new(8080);
 
     public ForzaDataOutDash LastPacket { get; set; } = new();
+    
+    public event Action? OnPacketSend;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
         while (!stoppingToken.IsCancellationRequested) {
@@ -25,8 +27,18 @@ public class ListenerTest(ILogger<ListenerTest> logger) : BackgroundService {
             if (packet.LapNumber <= LastPacket.LapNumber) continue;
 
             LastPacket = packet;
-            
-            
+            // await using var dbContext = new TelemetryDbContext();
+            //
+            // var lap = new LapData {
+            //     Id = packet.LapNumber,
+            //     TrackId = packet.TrackId,
+            //     CarId = packet.CarId,
+            //     LapTime = packet.CurrentLap
+            // };
+            //
+            // dbContext.LapData.Add(lap);
+            // await dbContext.SaveChangesAsync(stoppingToken);
+            // OnPacketSend?.Invoke();
         }
     }
 }
