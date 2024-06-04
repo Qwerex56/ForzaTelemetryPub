@@ -1,6 +1,6 @@
 ﻿namespace ForzaTelemetry.ForzaModels.DataFormatters;
 
-public static class PacketFormatter {
+public static class PacketParser {
     public static byte ReadUInt8(in byte[] bytes, ref int cursor) {
         var result = ParseUInt8(bytes, cursor);
         cursor += sizeof(byte);

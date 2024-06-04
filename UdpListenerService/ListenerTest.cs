@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Sockets;
 using ForzaTelemetry.ForzaModels.DataFormatters;
 using ForzaTelemetry.ForzaModels.DataOut;
-using UdpDbModels;
 
 namespace UdpListenerService;
 
@@ -32,7 +31,7 @@ public sealed class ListenerTest(ILogger<ListenerTest> logger)
                 continue;
             }
 
-            var packet = ForzaFormatter.DataOutDash(ref buffer);
+            var packet = ForzaParser.DataOutDash(ref buffer);
 
             if (packet.LapNumber <= LastPacket.LapNumber) continue;
 
