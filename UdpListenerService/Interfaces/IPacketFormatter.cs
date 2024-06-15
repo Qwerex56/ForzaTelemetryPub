@@ -3,8 +3,8 @@
 namespace UdpListenerService.Interfaces;
 
 public interface IPacketFormatter<TPacketParser> where TPacketParser : IPacketParser {
-    public void FormatPacket();
-    public void ValidatePacket();
+    public void FormatPacket(in byte[] bytes);
+    public bool ValidatePacket();
     public void BuildObjects();
     
     // Dash data functions

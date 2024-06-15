@@ -1,9 +1,10 @@
 ﻿using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.Interfaces;
 
 namespace ForzaTelemetry.ForzaModels.DataFormatters;
 
-public static class ForzaParser {
-    public static bool IsRaceOn(this byte[] bytes) {
+public class ForzaParser : IPacketParser {
+    public static bool IsRaceOn(byte[] bytes) {
         ArgumentOutOfRangeException.ThrowIfLessThan(bytes.Length, 4, "Packet is to small to parse");
 
         return PacketParser.ParseInt32(bytes, 0) > 0;

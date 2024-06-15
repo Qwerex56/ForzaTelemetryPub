@@ -25,11 +25,11 @@ public sealed class ListenerTest(ILogger<ListenerTest> logger)
             // var buffer = result.Buffer;
             var buffer = _udpClient.Receive(ref EndPoint);
 
-            if (!buffer.IsRaceOn()) {
-                await Task.Delay(Delay, stoppingToken);
-
-                continue;
-            }
+            // if (!buffer.IsRaceOn()) {
+            //     await Task.Delay(Delay, stoppingToken);
+            //
+            //     continue;
+            // }
 
             var packet = ForzaParser.DataOutDash(ref buffer);
 
