@@ -1,4 +1,10 @@
 ﻿@page "/"
+@implements IDisposable
+
+@using UdpListenerService.Listeners
+
+
+@inject FmFhListener listener
 
 @rendermode InteractiveServer
 
@@ -8,7 +14,32 @@
 
 Welcome to your new app.
 
+@if (!listener.IsListening) {
+    <button @onclick="ev => listener.StartListening()">
+        Start recording
+    </button>
+} else {
+    <button @onclick="() => { _cancellationTokenSource.Cancel(); }">
+        End Listening
+    </button>
+}
 
 @code {
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    protected override void OnInitialized() {
+        listener.OnPacketReceived += ShowReceivedData;
+        
+        base.OnInitialized();
+    }
+
+    private void ShowReceivedData() {
+        Console.WriteLine($"{listener.IsListening}");   
+    }
+
+    public void Dispose() {
+        listener.OnPacketReceived -= ShowReceivedData;
+        _cancellationTokenSource.Dispose();
+    }
 
 }

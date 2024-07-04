@@ -1,137 +1,180 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using ForzaTelemetry.ForzaModels.DataFormatters;
 using ForzaTelemetry.ForzaModels.DataOut;
 using UdpListenerService.Interfaces;
+
 namespace UdpListenerService.Listeners;
 
-public class FmFhListener : IPacketFormatter<ForzaParser>, IDbPacketFormatter {
-    private int _packetSize;
+public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposable {
+    private readonly Task _completedTask = Task.CompletedTask;
 
+    #region Events
+
+    public event Action? OnPacketReceived = () => Console.WriteLine($"Hello, world!");
+    public event Action? OnPacketAccepted = () => Console.WriteLine("Packet accepted");
+    public event Action? OnPacketRejected = () => Console.WriteLine("Packet rejected");
+
+    #endregion
+
+    public bool IsListening { get; private set; }
+
+    #region Packet
+
+    private int _packetSize;
+    private Fm8DataOutDash? _fmDataDash;
+
+    #endregion
+
+    #region Sockets
+
+    public UdpClient UdpClientListener { get; set; }
     private IPAddress _ipAddress;
     private int _port;
 
-    private ForzaDataOutDash _fmDataDash;
+    #endregion
 
-    public UdpClient UdpClientListener { get; set; }
+    #region CancellationTokens
+
+    private CancellationTokenSource _listenerTokenSource;
+    private CancellationToken _listenerToken;
+
+    #endregion
 
     public Task StartAsync(CancellationToken cancellationToken) {
+        // TODO: Read user setting file or fetch them from db
+
         // Setup basic information, base for forza motorsport/horizon
-        _packetSize = 351;
-        _ipAddress = IPAddress.Parse("127.0.0.1");
-        _port = 5371;
-        
+        _packetSize = 331;
+        _ipAddress = IPAddress.Any;
+        _port = 8080;
+
         UdpClientListener = new(_port);
 
         try {
             UdpClientListener.Connect(_ipAddress, _port);
-        } catch (SocketException e) {
+        } catch (SocketException) {
             Console.WriteLine("Check your IP format.");
-            Console.WriteLine(e);
 
             throw;
         }
 
-        return Task.CompletedTask;
+        return _completedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken) {
-        UdpClientListener.Close();
-        throw new NotImplementedException();
+        return _completedTask;
     }
 
-    public async void StartListening(CancellationToken cancellationToken) {
-        while (!cancellationToken.IsCancellationRequested) {
-            break;
+    /// <summary>
+    /// Starts listening on given port and address.
+    /// Note that it doesn't set up udp server; This is done at startup in StartAsync() function.
+    /// </summary>
+    public void StartListening() {
+        CreateCancellationToken();
+        var endpoint = new IPEndPoint(_ipAddress, _port);
+
+        IsListening = true;
+
+        while (!_listenerToken.IsCancellationRequested) {
+            var buffer = UdpClientListener.Receive(ref endpoint);
+            var bufferSize = buffer.Length;
+
+            if (!ValidatePacket(bufferSize)) continue;
+
+            FormatPacket(in buffer);
+            OnPacketReceived?.Invoke();
         }
-        
-        throw new NotImplementedException();
     }
 
-    public async Task StartListeningAsync(CancellationToken cancellationToken) {
-        while (!cancellationToken.IsCancellationRequested) {
-            var result = await UdpClientListener.ReceiveAsync(cancellationToken);
+    public async Task StartListeningAsync() {
+        CreateCancellationToken();
+
+        var endpoint = new IPEndPoint(_ipAddress, _port);
+        UdpClientListener.Connect(endpoint);
+
+        while (!_listenerToken.IsCancellationRequested) {
+            var result = await UdpClientListener.ReceiveAsync(_listenerToken);
 
             var buffer = result.Buffer;
             var bufferSize = result.Buffer.Length;
-            
+
             // Packet is not valid
-            if (!ValidatePacket()) {
-                // break from loop, next packets will probably be invalid
-                break;
-            }
-            
+            if (!ValidatePacket(bufferSize)) continue;
+
             FormatPacket(in buffer);
-
-            if (_fmDataDash.IsRaceOn == 0) {
-                await Task.Delay(16, cancellationToken);
-                continue;
-            }
-            
-            BuildObjects();
+            OnPacketReceived?.Invoke();
         }
-
-        throw new NotImplementedException();
-    }
-    
-    public void StopListening(CancellationToken cancellationToken) {
-        throw new NotImplementedException();
     }
 
-    public Task StopListeningAsync(CancellationToken cancellationToken) =>
-        throw new NotImplementedException();
+    public void StopListening() => _listenerTokenSource.Cancel();
 
-    public bool SetListeningPort(int port) =>
-        throw new NotImplementedException();
+    public async Task StopListeningAsync() => await _listenerTokenSource.CancelAsync();
 
-    public bool SetListeningPort(string port) =>
-        throw new NotImplementedException();
+    /// <summary>
+    /// Changes default port, port can only be changed when the udp client is not listening.
+    /// </summary>
+    /// <param name="port">new port value.</param>
+    /// <returns>true, if port has been changed successfully, false otherwise.</returns>
+    public bool SetListeningPort(int port) {
+        if (!_listenerTokenSource.IsCancellationRequested) return false;
 
-    public bool SetIpAddressEndpoint(IPEndPoint endPoint) =>
-        throw new NotImplementedException();
+        _port = port;
 
-    public bool SetIpAddressEndpoint(long ip, int port) =>
-        throw new NotImplementedException();
+        return true;
+    }
 
-    public bool SetIpAddressEndpoint(string ip, int port) =>
-        throw new NotImplementedException();
+    public bool SetIpAddress(string address) {
+        if (!_listenerTokenSource.IsCancellationRequested) return false;
+
+        _ipAddress = IPAddress.Parse(address);
+
+        return true;
+    }
 
     public void FormatPacket(in byte[] bytes) {
         _fmDataDash = new();
     }
 
-    public bool ValidatePacket() {
-        throw new NotImplementedException();
-    }
+    /// <summary>
+    /// Make check if a packet is long enough to be parsed.
+    /// </summary>
+    /// <param name="packetLength">Received packet length</param>
+    /// <returns>true when a packet has a valid size.</returns>
+    public bool ValidatePacket(int packetLength) => packetLength == _packetSize;
 
-    public void BuildObjects() {
-        throw new NotImplementedException();
-    }
-
-    public object TiresTemperatures() =>
-        throw new NotImplementedException();
-
-    public object TiresWear() =>
-        throw new NotImplementedException();
-
-    public object LapData() =>
-        throw new NotImplementedException();
-
-    public object ControlData() =>
-        throw new NotImplementedException();
-
-    public object RetrieveVelocities() =>
-        throw new NotImplementedException();
-
-    public object RetrieveAccelerations() =>
-        throw new NotImplementedException();
-
-    public object RetrieveWheelData() =>
-        throw new NotImplementedException();
+    /// <summary>
+    /// Make check if a packet is long enough to be parsed.
+    /// </summary>
+    /// <param name="bytes">Received packets</param>
+    /// <returns>true when the packet has a valid size.</returns>
+    public bool ValidatePacket(in byte[] bytes) => bytes.Length == _packetSize;
 
     public bool ConnectToRemoteDataBase() =>
         throw new NotImplementedException();
 
     public bool ConnectToLocalDataBase() =>
         throw new NotImplementedException();
+
+    /// <summary>
+    /// Used to create and assign cancellation token
+    /// </summary>
+    private void CreateCancellationToken() {
+        _listenerTokenSource = new();
+        _listenerToken = _listenerTokenSource.Token;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing) {
+        if (!disposing) {
+            return;
+        }
+
+        _completedTask.Dispose();
+        _listenerTokenSource.Dispose();
+        UdpClientListener.Dispose();
+    }
 }

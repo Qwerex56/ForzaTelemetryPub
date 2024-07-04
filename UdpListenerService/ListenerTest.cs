@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
-using ForzaTelemetry.ForzaModels.DataFormatters;
 using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.PacketParser;
 
 namespace UdpListenerService;
 
@@ -13,7 +13,7 @@ public sealed class ListenerTest(ILogger<ListenerTest> logger)
 
     private readonly UdpClient _udpClient = new(8080);
 
-    public ForzaDataOutDash LastPacket { get; set; } = new();
+    public Fm8DataOutDash LastPacket { get; set; } = new();
 
     public event Action? OnPacketSend;
 
@@ -31,7 +31,7 @@ public sealed class ListenerTest(ILogger<ListenerTest> logger)
             //     continue;
             // }
 
-            var packet = ForzaParser.DataOutDash(ref buffer);
+            var packet = ForzaPacketParser.DataOutDash(ref buffer);
 
             if (packet.LapNumber <= LastPacket.LapNumber) continue;
 
