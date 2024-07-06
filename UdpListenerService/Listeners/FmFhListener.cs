@@ -1,7 +1,10 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.PacketParser;
+using Microsoft.Extensions.Options;
 using UdpListenerService.Interfaces;
+using UdpListenerService.UdpSettings;
 
 namespace UdpListenerService.Listeners;
 
@@ -10,9 +13,36 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
 
     #region Events
 
-    public event Action? OnPacketReceived = () => Console.WriteLine($"Hello, world!");
-    public event Action? OnPacketAccepted = () => Console.WriteLine("Packet accepted");
-    public event Action? OnPacketRejected = () => Console.WriteLine("Packet rejected");
+    /// <summary>
+    /// OnPacketReceived is fired after receiving the upd packet. <br></br>
+    /// Note: This event doesn't check the structure of a packet, it can be anything.
+    /// </summary>
+    public event Action<byte[]>? OnPacketReceived = _ => Console.WriteLine("Hello, world!");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action<byte[]>? OnPacketAccepted = _ => Console.WriteLine("Packet accepted");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action<byte[]>? OnPacketRejected = _ => Console.WriteLine("Packet rejected");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action<byte[], Fm8DataOutDash?>? OnPacketFormatted = (_, _) => Console.WriteLine("Packet Parsed");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action? OnListenStart = () => Console.WriteLine("Start Listening");
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public event Action? OnListenEnd = () => Console.WriteLine("End listening");
 
     #endregion
 
@@ -20,38 +50,28 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
 
     #region Packet
 
-    private int _packetSize;
-    private Fm8DataOutDash? _fmDataDash;
-
-    #endregion
-
-    #region Sockets
-
     public UdpClient UdpClientListener { get; set; }
-    private IPAddress _ipAddress;
-    private int _port;
+    private ForzaUdpSettings _options;
+    private Fm8DataOutDash? _fmDataDash;
 
     #endregion
 
     #region CancellationTokens
 
-    private CancellationTokenSource _listenerTokenSource;
+    private CancellationTokenSource _listenerTokenSource = new();
     private CancellationToken _listenerToken;
 
     #endregion
 
+    public FmFhListener(IOptions<ForzaUdpSettings> options) {
+        _options = options.Value;
+
+        UdpClientListener = new(_options.Port);
+    }
+
     public Task StartAsync(CancellationToken cancellationToken) {
-        // TODO: Read user setting file or fetch them from db
-
-        // Setup basic information, base for forza motorsport/horizon
-        _packetSize = 331;
-        _ipAddress = IPAddress.Any;
-        _port = 8080;
-
-        UdpClientListener = new(_port);
-
         try {
-            UdpClientListener.Connect(_ipAddress, _port);
+            UdpClientListener.Connect(new IPAddress(_options.IpAddress), _options.Port);
         } catch (SocketException) {
             Console.WriteLine("Check your IP format.");
 
@@ -71,25 +91,43 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     /// </summary>
     public void StartListening() {
         CreateCancellationToken();
-        var endpoint = new IPEndPoint(_ipAddress, _port);
+        var endpoint = new IPEndPoint(new IPAddress(_options.IpAddress), _options.Port);
+        OnListenStart?.Invoke();
 
         IsListening = true;
 
         while (!_listenerToken.IsCancellationRequested) {
             var buffer = UdpClientListener.Receive(ref endpoint);
+            OnPacketReceived?.Invoke(buffer);
+
             var bufferSize = buffer.Length;
 
-            if (!ValidatePacket(bufferSize)) continue;
+            if (!ValidatePacket(bufferSize)) {
+                OnPacketRejected?.Invoke(buffer);
 
-            FormatPacket(in buffer);
-            OnPacketReceived?.Invoke();
+                continue;
+            }
+
+            OnPacketAccepted?.Invoke(buffer);
+
+            try {
+                FormatPacket(in buffer);
+            } catch (Exception e) {
+                Console.WriteLine(e);
+
+                throw;
+            } finally {
+                OnPacketFormatted?.Invoke(buffer, _fmDataDash);
+            }
         }
+
+        OnListenEnd?.Invoke();
     }
 
     public async Task StartListeningAsync() {
         CreateCancellationToken();
 
-        var endpoint = new IPEndPoint(_ipAddress, _port);
+        var endpoint = new IPEndPoint(new IPAddress(_options.IpAddress), _options.Port);
         UdpClientListener.Connect(endpoint);
 
         while (!_listenerToken.IsCancellationRequested) {
@@ -102,7 +140,7 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
             if (!ValidatePacket(bufferSize)) continue;
 
             FormatPacket(in buffer);
-            OnPacketReceived?.Invoke();
+            OnPacketReceived?.Invoke(buffer);
         }
     }
 
@@ -118,7 +156,7 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     public bool SetListeningPort(int port) {
         if (!_listenerTokenSource.IsCancellationRequested) return false;
 
-        _port = port;
+        // _options = _options with { Port = port };
 
         return true;
     }
@@ -126,13 +164,13 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     public bool SetIpAddress(string address) {
         if (!_listenerTokenSource.IsCancellationRequested) return false;
 
-        _ipAddress = IPAddress.Parse(address);
+        // _options = _options with { IpAddress = IPAddress.Parse(address) };
 
         return true;
     }
 
-    public void FormatPacket(in byte[] bytes) {
-        _fmDataDash = new();
+    private void FormatPacket(in byte[] bytes) {
+        _fmDataDash = ForzaPacketParser.DataOutDash(in bytes);
     }
 
     /// <summary>
@@ -140,14 +178,14 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     /// </summary>
     /// <param name="packetLength">Received packet length</param>
     /// <returns>true when a packet has a valid size.</returns>
-    public bool ValidatePacket(int packetLength) => packetLength == _packetSize;
+    private bool ValidatePacket(int packetLength) => packetLength == _options.PacketSize;
 
     /// <summary>
     /// Make check if a packet is long enough to be parsed.
     /// </summary>
     /// <param name="bytes">Received packets</param>
     /// <returns>true when the packet has a valid size.</returns>
-    public bool ValidatePacket(in byte[] bytes) => bytes.Length == _packetSize;
+    private bool ValidatePacket(in byte[] bytes) => bytes.Length == _options.PacketSize;
 
     public bool ConnectToRemoteDataBase() =>
         throw new NotImplementedException();

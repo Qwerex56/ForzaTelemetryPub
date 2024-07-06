@@ -90,7 +90,7 @@ public static class ForzaPacketParser {
         };
     }
     
-    public static Fm8DataOutDash DataOutDash(ref byte[] bytes) {
+    public static Fm8DataOutDash DataOutDash(in byte[] bytes) {
         var cursor = 0;
         
         return new() {

@@ -28,7 +28,7 @@ Welcome to your new app.
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     protected override void OnInitialized() {
-        listener.OnPacketReceived += ShowReceivedData;
+        // listener.OnPacketReceived += ShowReceivedData;
         
         base.OnInitialized();
     }
@@ -38,7 +38,7 @@ Welcome to your new app.
     }
 
     public void Dispose() {
-        listener.OnPacketReceived -= ShowReceivedData;
+        // listener.OnPacketReceived -= ShowReceivedData;
         _cancellationTokenSource.Dispose();
     }
 
