@@ -1,6 +1,6 @@
 ﻿{
   "ForzaUdpSettings": {
-    "PacketSize": "3",
+    "PacketSize": "331",
     "IpAddress": [
       127,
       0,

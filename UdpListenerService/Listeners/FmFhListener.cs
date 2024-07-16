@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.Interfaces;
 using ForzaTelemetry.ForzaModels.PacketParser;
 using Microsoft.Extensions.Options;
 using UdpListenerService.Interfaces;
@@ -17,39 +18,38 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     /// OnPacketReceived is fired after receiving the upd packet. <br></br>
     /// Note: This event doesn't check the structure of a packet, it can be anything.
     /// </summary>
-    public event Action<byte[]>? OnPacketReceived = _ => Console.WriteLine("Hello, world!");
+    public event Action<byte[]>? OnPacketReceived;
 
     /// <summary>
     /// 
     /// </summary>
-    public event Action<byte[]>? OnPacketAccepted = _ => Console.WriteLine("Packet accepted");
+    public event Action<byte[]>? OnPacketAccepted;
 
     /// <summary>
     /// 
     /// </summary>
-    public event Action<byte[]>? OnPacketRejected = _ => Console.WriteLine("Packet rejected");
+    public event Action<byte[]>? OnPacketRejected;
 
     /// <summary>
     /// 
     /// </summary>
-    public event Action<byte[], Fm8DataOutDash?>? OnPacketFormatted = (_, _) => Console.WriteLine("Packet Parsed");
+    public event Action<byte[], IDataOut>? OnPacketFormatted;
 
     /// <summary>
     /// 
     /// </summary>
-    public event Action? OnListenStart = () => Console.WriteLine("Start Listening");
+    public event Action? OnListenStart;
 
     /// <summary>
     /// 
     /// </summary>
-    public event Action? OnListenEnd = () => Console.WriteLine("End listening");
+    public event Action? OnListenEnd;
 
     #endregion
-
+    
     public bool IsListening { get; private set; }
 
     #region Packet
-
     public UdpClient UdpClientListener { get; set; }
     private ForzaUdpSettings _options;
     private Fm8DataOutDash? _fmDataDash;
@@ -70,14 +70,6 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
     }
 
     public Task StartAsync(CancellationToken cancellationToken) {
-        try {
-            UdpClientListener.Connect(new IPAddress(_options.IpAddress), _options.Port);
-        } catch (SocketException) {
-            Console.WriteLine("Check your IP format.");
-
-            throw;
-        }
-
         return _completedTask;
     }
 
@@ -122,6 +114,8 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
         }
 
         OnListenEnd?.Invoke();
+
+        IsListening = false;
     }
 
     public async Task StartListeningAsync() {

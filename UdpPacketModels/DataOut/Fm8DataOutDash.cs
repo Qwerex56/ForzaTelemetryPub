@@ -1,124 +1,125 @@
 ﻿using ForzaTelemetry.ForzaModels.Interfaces;
 using ForzaTelemetry.ForzaModels.RaceDataModels;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace ForzaTelemetry.ForzaModels.DataOut;
 
 public class Fm8DataOutDash : IDataOut {
-    public int IsRaceOn { get; set; }
-    public uint TimestampMs { get; set; }
-    public float EngineMaxRpm { get; set; }
-    public float EngineIdleRpm { get; set; }
-    public float CurrentEngineRpm { get; set; }
+    public int IsRaceOn { get; init; }
+    public uint TimestampMs { get; init; }
+    public float EngineMaxRpm { get; init; }
+    public float EngineIdleRpm { get; init; }
+    public float CurrentEngineRpm { get; init; }
 
-    public float AccelerationX { get; set; }
-    public float AccelerationY { get; set; }
-    public float AccelerationZ { get; set; }
+    public float AccelerationX { get; init; }
+    public float AccelerationY { get; init; }
+    public float AccelerationZ { get; init; }
 
-    public float VelocityX { get; set; }
-    public float VelocityY { get; set; }
-    public float VelocityZ { get; set; }
+    public float VelocityX { get; init; }
+    public float VelocityY { get; init; }
+    public float VelocityZ { get; init; }
 
-    public float AngularVelocityX { get; set; }
-    public float AngularVelocityY { get; set; }
-    public float AngularVelocityZ { get; set; }
+    public float AngularVelocityX { get; init; }
+    public float AngularVelocityY { get; init; }
+    public float AngularVelocityZ { get; init; }
 
-    public float Yaw { get; set; }
-    public float Pitch { get; set; }
-    public float Roll { get; set; }
+    public float Yaw { get; init; }
+    public float Pitch { get; init; }
+    public float Roll { get; init; }
 
-    public float NormalizedSuspensionTravelFl { get; set; }
-    public float NormalizedSuspensionTravelFr { get; set; }
-    public float NormalizedSuspensionTravelRl { get; set; }
-    public float NormalizedSuspensionTravelRr { get; set; }
+    public float NormalizedSuspensionTravelFl { get; init; }
+    public float NormalizedSuspensionTravelFr { get; init; }
+    public float NormalizedSuspensionTravelRl { get; init; }
+    public float NormalizedSuspensionTravelRr { get; init; }
 
-    public float TireSlipRatioFl { get; set; }
-    public float TireSlipRatioFr { get; set; }
-    public float TireSlipRatioRl { get; set; }
-    public float TireSlipRatioRr { get; set; }
+    public float TireSlipRatioFl { get; init; }
+    public float TireSlipRatioFr { get; init; }
+    public float TireSlipRatioRl { get; init; }
+    public float TireSlipRatioRr { get; init; }
 
-    public float WheelRotationSpeedFl { get; set; }
-    public float WheelRotationSpeedFr { get; set; }
-    public float WheelRotationSpeedRl { get; set; }
-    public float WheelRotationSpeedRr { get; set; }
+    public float WheelRotationSpeedFl { get; init; }
+    public float WheelRotationSpeedFr { get; init; }
+    public float WheelRotationSpeedRl { get; init; }
+    public float WheelRotationSpeedRr { get; init; }
 
-    public float WheelOnRumbleStripFl { get; set; }
-    public float WheelOnRumbleStripFr { get; set; }
-    public float WheelOnRumbleStripRl { get; set; }
-    public float WheelOnRumbleStripRr { get; set; }
+    public float WheelOnRumbleStripFl { get; init; }
+    public float WheelOnRumbleStripFr { get; init; }
+    public float WheelOnRumbleStripRl { get; init; }
+    public float WheelOnRumbleStripRr { get; init; }
 
-    public float WheelInPuddleDepthFl { get; set; }
-    public float WheelInPuddleDepthFr { get; set; }
-    public float WheelInPuddleDepthRl { get; set; }
-    public float WheelInPuddleDepthRr { get; set; }
+    public float WheelInPuddleDepthFl { get; init; }
+    public float WheelInPuddleDepthFr { get; init; }
+    public float WheelInPuddleDepthRl { get; init; }
+    public float WheelInPuddleDepthRr { get; init; }
 
-    public float SurfaceRumbleFl { get; set; }
-    public float SurfaceRumbleFr { get; set; }
-    public float SurfaceRumbleRl { get; set; }
-    public float SurfaceRumbleRr { get; set; }
+    public float SurfaceRumbleFl { get; init; }
+    public float SurfaceRumbleFr { get; init; }
+    public float SurfaceRumbleRl { get; init; }
+    public float SurfaceRumbleRr { get; init; }
 
-    public float TireSlipAngleFl { get; set; }
-    public float TireSlipAngleFr { get; set; }
-    public float TireSlipAngleRl { get; set; }
-    public float TireSlipAngleRr { get; set; }
+    public float TireSlipAngleFl { get; init; }
+    public float TireSlipAngleFr { get; init; }
+    public float TireSlipAngleRl { get; init; }
+    public float TireSlipAngleRr { get; init; }
 
-    public float TireCombinedSlipFl { get; set; }
-    public float TireCombinedSlipFr { get; set; }
-    public float TireCombinedSlipRl { get; set; }
-    public float TireCombinedSlipRr { get; set; }
+    public float TireCombinedSlipFl { get; init; }
+    public float TireCombinedSlipFr { get; init; }
+    public float TireCombinedSlipRl { get; init; }
+    public float TireCombinedSlipRr { get; init; }
 
-    public float SuspensionTravelMetersFl { get; set; }
-    public float SuspensionTravelMetersFr { get; set; }
-    public float SuspensionTravelMetersRl { get; set; }
-    public float SuspensionTravelMetersRr { get; set; }
+    public float SuspensionTravelMetersFl { get; init; }
+    public float SuspensionTravelMetersFr { get; init; }
+    public float SuspensionTravelMetersRl { get; init; }
+    public float SuspensionTravelMetersRr { get; init; }
 
-    public int CarId { get; set; }
-    public int CarClass { get; set; }
-    public int CarPi { get; set; }
-    public int DrivetrainType { get; set; }
-    public int CylinderCount { get; set; }
+    public int CarId { get; init; }
+    public int CarClass { get; init; }
+    public int CarPi { get; init; }
+    public int DrivetrainType { get; init; }
+    public int CylinderCount { get; init; }
 
-    public float PositionX { get; set; }
-    public float PositionY { get; set; }
-    public float PositionZ { get; set; }
+    public float PositionX { get; init; }
+    public float PositionY { get; init; }
+    public float PositionZ { get; init; }
 
-    public float Speed { get; set; }
-    public float Power { get; set; }
-    public float Torque { get; set; }
+    public float Speed { get; init; }
+    public float Power { get; init; }
+    public float Torque { get; init; }
 
-    public float TireTemperatureFl { get; set; }
-    public float TireTemperatureFr { get; set; }
-    public float TireTemperatureRl { get; set; }
-    public float TireTemperatureRr { get; set; }
+    public float TireTemperatureFl { get; init; }
+    public float TireTemperatureFr { get; init; }
+    public float TireTemperatureRl { get; init; }
+    public float TireTemperatureRr { get; init; }
 
-    public float Boost { get; set; }
-    public float Fuel { get; set; }
+    public float Boost { get; init; }
+    public float Fuel { get; init; }
 
-    public float DistanceTraveled { get; set; }
+    public float DistanceTraveled { get; init; }
 
-    public float BestLap { get; set; }
-    public float LastLap { get; set; }
-    public float CurrentLap { get; set; }
-    public float CurrentRaceTime { get; set; }
+    public float BestLap { get; init; }
+    public float LastLap { get; init; }
+    public float CurrentLap { get; init; }
+    public float CurrentRaceTime { get; init; }
 
-    public ushort LapNumber { get; set; }
-    public byte RacePosition { get; set; }
+    public ushort LapNumber { get; init; }
+    public byte RacePosition { get; init; }
 
-    public byte Accel { get; set; }
-    public byte Brake { get; set; }
-    public byte Clutch { get; set; }
-    public byte HandBrake { get; set; }
-    public byte Gear { get; set; }
-    public sbyte Steer { get; set; }
+    public byte Accel { get; init; }
+    public byte Brake { get; init; }
+    public byte Clutch { get; init; }
+    public byte HandBrake { get; init; }
+    public byte Gear { get; init; }
+    public sbyte Steer { get; init; }
 
-    public sbyte NormalizedDrivingLine { get; set; }
-    public sbyte NormalizedAiBrakeDiff { get; set; }
+    public sbyte NormalizedDrivingLine { get; init; }
+    public sbyte NormalizedAiBrakeDiff { get; init; }
 
-    public float TireWearFl { get; set; }
-    public float TireWearFr { get; set; }
-    public float TireWearRl { get; set; }
-    public float TireWearRr { get; set; }
+    public float TireWearFl { get; init; }
+    public float TireWearFr { get; init; }
+    public float TireWearRl { get; init; }
+    public float TireWearRr { get; init; }
 
-    public int TrackId { get; set; }
+    public int TrackId { get; init; }
 
     public LapData GetLapData() => new(
         DistanceTraveled,

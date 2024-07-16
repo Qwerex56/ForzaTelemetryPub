@@ -4,7 +4,7 @@ using UdpListenerService.UdpSettings;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
-builder.Configuration.AddJsonFile("./UdpSettings/ForzaUdpSettings.json", true, false);
+builder.Configuration.AddJsonFile("./UdpSettings/ForzaUdpSettings.json", true, true);
 
 builder.Services.AddOptions();
 builder.Services.Configure<ForzaUdpSettings>(builder.Configuration.GetSection("ForzaUdpSettings"));

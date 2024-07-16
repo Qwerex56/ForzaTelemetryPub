@@ -1,7 +1,8 @@
 ﻿namespace UdpListenerService.UdpSettings;
 
 public sealed class ForzaUdpSettings {
-    public byte[] IpAddress { get; } = [];
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public byte[] IpAddress { get; init; } = [];
     public int Port { get; init; }
     public int PacketSize { get; init; }
 }

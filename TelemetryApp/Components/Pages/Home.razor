@@ -1,8 +1,9 @@
 ﻿@page "/"
 @implements IDisposable
 
+@using ForzaTelemetry.ForzaModels.DataOut
+@using ForzaTelemetry.ForzaModels.Interfaces
 @using UdpListenerService.Listeners
-
 
 @inject FmFhListener listener
 
@@ -15,30 +16,60 @@
 Welcome to your new app.
 
 @if (!listener.IsListening) {
-    <button @onclick="ev => listener.StartListening()">
+    <button @onclick="OpenListener">
         Start recording
     </button>
 } else {
-    <button @onclick="() => { _cancellationTokenSource.Cancel(); }">
+    <button @onclick="() => { listener.StopListening(); }">
         End Listening
     </button>
 }
 
+@if (_fm8DataOutDashes.Count > 0) {
+    <div>
+        @foreach (var tireData in _fm8DataOutDashes.LastOrDefault(new Fm8DataOutDash()).GetTiresData()) {
+            <p>Tire Data</p>
+            <div>
+                <p>Temperature: @tireData.Temperature</p>
+                <p>Wear: @tireData.Wear</p>
+            </div>
+        }
+    </div>
+}
+
+Hello World
+
 @code {
     private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private readonly List<Fm8DataOutDash> _fm8DataOutDashes = [];
 
-    protected override void OnInitialized() {
-        // listener.OnPacketReceived += ShowReceivedData;
-        
-        base.OnInitialized();
+    protected override bool ShouldRender() => true;
+
+    private void OpenListener() {
+        if (listener.IsListening) return;
+
+        // Add events
+
+        listener.OnPacketFormatted += CollectReceivedPackets;
+
+        // Start listener
+        Task.Run(() => listener.StartListening());
+
+        Console.WriteLine("Opened listener");
     }
 
-    private void ShowReceivedData() {
-        Console.WriteLine($"{listener.IsListening}");   
+    private void CollectReceivedPackets(byte[] _, IDataOut dataOut) {
+        if (dataOut is not Fm8DataOutDash fm8DataOut) return;
+        if (fm8DataOut.IsRaceOn == 0) return;
+
+        _fm8DataOutDashes.Add(fm8DataOut);
+
+        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose() {
-        // listener.OnPacketReceived -= ShowReceivedData;
+        listener.OnPacketFormatted -= CollectReceivedPackets;
+
         _cancellationTokenSource.Dispose();
     }
 

@@ -1,6 +1,7 @@
 using TelemetryApp;
 using TelemetryApp.Components;
 using UdpListenerService.Listeners;
+using UdpListenerService.UdpSettings;
 
 // using Microsoft.EntityFrameworkCore;
 // using UdpDbModels;
@@ -12,6 +13,12 @@ builder.Services.AddRazorComponents()
        .AddInteractiveServerComponents();
 
 builder.Services.AddMvc();
+
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
+builder.Configuration.AddJsonFile("./ForzaUdpSettings.json", true, true);
+
+builder.Services.AddOptions();
+builder.Services.Configure<ForzaUdpSettings>(builder.Configuration.GetSection("ForzaUdpSettings"));
 
 builder.Services.AddSingleton<FmFhListener>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<FmFhListener>());
