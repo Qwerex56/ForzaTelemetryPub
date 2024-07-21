@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport;
 using ForzaTelemetry.ForzaModels.Interfaces;
 using ForzaTelemetry.ForzaModels.PacketParser;
 using Microsoft.Extensions.Options;
@@ -110,6 +111,7 @@ public class FmFhListener : IListenerHostedService, IDbPacketFormatter, IDisposa
                 throw;
             } finally {
                 OnPacketFormatted?.Invoke(buffer, _fmDataDash);
+                
             }
         }
 

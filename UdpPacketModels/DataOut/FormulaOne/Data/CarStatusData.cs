@@ -1,0 +1,26 @@
+﻿namespace ForzaTelemetry.ForzaModels.DataOut.FormulaOne.Data;
+
+public record CarStatusData(
+    byte TractionControl,
+    byte AntiLockBraked,
+    byte FuelMix,
+    byte FrontBrakeBias,
+    byte PitLimiterStatus,
+    float FuelInTank,
+    float FuelCapacity,
+    float FuelRemainingLaps,
+    ushort MaxRpm,
+    ushort IdleRpm,
+    byte MaxGears,
+    byte DrsAllowed,
+    ushort DrsActivationDistance,
+    byte ActualTyreCompound,
+    byte VisualTyreCompound,
+    byte TyreAgeLaps,
+    sbyte VehicleFiaFlags,
+    float ErsStoreEnergy,
+    byte ErsDeployMode,
+    float ErsHarvestedThisLapMguk,
+    float ErsHarvestedThisLapMguh,
+    float ErsDeployedThisLap,
+    byte NetworkPaused);

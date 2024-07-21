@@ -1,13 +1,19 @@
-﻿namespace ForzaTelemetry.ForzaModels.RaceDataModels;
+﻿using ForzaTelemetry.ForzaModels.RaceDataModels.Enums;
+using ForzaTelemetry.ForzaModels.RaceDataModels.Interfaces;
+
+namespace ForzaTelemetry.ForzaModels.RaceDataModels;
 
 public record TrackData(
-    int? TrackId) : IDisposable {
-    private void Dispose(bool disposing) {
+    int? TrackId,
+    float? TrackLength) : IRaceData, IDisposable {
+    public RacingGameTitleEnum GameTitle { get; init; }
+
+    public void Dispose(bool disposing) {
         if (!disposing) {
             return;
         }
 
-        // TODO release managed resources here
+        // Release managed resources here
     }
 
     public void Dispose() {

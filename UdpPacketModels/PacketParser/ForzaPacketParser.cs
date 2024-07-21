@@ -1,4 +1,5 @@
 ﻿using ForzaTelemetry.ForzaModels.DataOut;
+using ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport;
 using ForzaTelemetry.ForzaModels.Extensions;
 
 namespace ForzaTelemetry.ForzaModels.PacketParser;

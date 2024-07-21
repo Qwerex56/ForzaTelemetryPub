@@ -1,8 +1,10 @@
 ﻿@page "/"
 @implements IDisposable
 
-@using ForzaTelemetry.ForzaModels.DataOut
+@using ForzaTelemetry.ForzaModels.DataAnalyzers
+@using ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport
 @using ForzaTelemetry.ForzaModels.Interfaces
+@using ForzaTelemetry.ForzaModels.RaceDataModels
 @using UdpListenerService.Listeners
 
 @inject FmFhListener listener
@@ -37,11 +39,39 @@ Welcome to your new app.
     </div>
 }
 
+    <div>
+        On throttle time: @_steerAnalyzer.OnThrottleTimePercentage()%
+    </div>
+    <div>
+        On brake time: @_steerAnalyzer.OnBrakeTimePercentage()%
+    </div>
+    <div>
+        On off throttle time: @_steerAnalyzer.OffThrottleTimePercentage()%
+    </div>
+
 Hello World
 
+
 @code {
-    private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly List<Fm8DataOutDash> _fm8DataOutDashes = [];
+    private readonly SteerAnalyzer _steerAnalyzer = new();
+    private readonly CarTelemetryAnalyzer _telemetryAnalyzer = new();
+    private ushort _lapNumber;
+    
+    private ushort LapNumber {
+        get => _lapNumber;
+        set {
+            if (value <= _lapNumber) return;
+            
+            Console.WriteLine("New Lap");
+            _steerAnalyzer.SaveLapSteerAndReset();
+
+            _telemetryAnalyzer.SpeedChart();
+            _telemetryAnalyzer.FlushSamples();
+            
+            _lapNumber = value;
+        }
+    }
 
     protected override bool ShouldRender() => true;
 
@@ -63,14 +93,24 @@ Hello World
         if (fm8DataOut.IsRaceOn == 0) return;
 
         _fm8DataOutDashes.Add(fm8DataOut);
+        
+        LapNumber = fm8DataOut.LapNumber;
+        
+        var sample = new CarTelemetryData((ushort)fm8DataOut.Speed, 
+            fm8DataOut.Accel, 
+            fm8DataOut.Steer, 
+            fm8DataOut.Brake, 
+            fm8DataOut.Clutch, 
+            (sbyte)fm8DataOut.Gear, 
+            (ushort)fm8DataOut.CurrentEngineRpm);
+        _steerAnalyzer.AddSample(sample);
+        _telemetryAnalyzer.AddSample(sample);
 
         InvokeAsync(StateHasChanged);
     }
 
     public void Dispose() {
         listener.OnPacketFormatted -= CollectReceivedPackets;
-
-        _cancellationTokenSource.Dispose();
     }
 
 }

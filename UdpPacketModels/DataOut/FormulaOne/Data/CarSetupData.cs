@@ -1,0 +1,25 @@
+﻿namespace ForzaTelemetry.ForzaModels.DataOut.FormulaOne.Data;
+
+public record CarSetupData(
+    byte FrontWing,
+    byte RearWing,
+    byte OnThrottle,
+    byte OffThrottle,
+    float FrontCamber,
+    float RearCamber,
+    float FrontToe,
+    float RearToe,
+    byte FrontSuspension,
+    byte RearSuspension,
+    byte FrontAntiRollBar,
+    byte RearAntiRollBar,
+    byte FrontSuspensionHeight,
+    byte RearSuspensionHeight,
+    byte BrakePressure,
+    byte BrakeBias,
+    float RearLeftTyrePressure,
+    float RearRightTyrePressure,
+    float FrontLeftTyrePressure,
+    float FrontRightTyrePressure,
+    byte Ballast,
+    float FuelLoad);

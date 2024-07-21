@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace UdpDbModels;
+﻿namespace UdpDbModels.Models;
 
 public partial class LapData
 {

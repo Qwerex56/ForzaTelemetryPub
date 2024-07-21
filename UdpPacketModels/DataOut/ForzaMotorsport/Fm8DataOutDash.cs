@@ -1,8 +1,9 @@
 ﻿using ForzaTelemetry.ForzaModels.Interfaces;
 using ForzaTelemetry.ForzaModels.RaceDataModels;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace ForzaTelemetry.ForzaModels.DataOut;
+namespace ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport;
 
 public class Fm8DataOutDash : IDataOut {
     public int IsRaceOn { get; init; }
@@ -10,7 +11,7 @@ public class Fm8DataOutDash : IDataOut {
     public float EngineMaxRpm { get; init; }
     public float EngineIdleRpm { get; init; }
     public float CurrentEngineRpm { get; init; }
-
+    
     public float AccelerationX { get; init; }
     public float AccelerationY { get; init; }
     public float AccelerationZ { get; init; }

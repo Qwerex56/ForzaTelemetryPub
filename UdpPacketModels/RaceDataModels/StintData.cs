@@ -3,17 +3,17 @@ using ForzaTelemetry.ForzaModels.RaceDataModels.Interfaces;
 
 namespace ForzaTelemetry.ForzaModels.RaceDataModels;
 
-public record WheelData(
-    float? RotationSpeed,
-    float? OnRumbleStrip,
-    float? InPuddleDepth) : IRaceData, IDisposable {
+// TODO: Add model values
+public record StintData(
+    byte? TyreCompound,
+    byte? EndLap) : IRaceData, IDisposable {
     public RacingGameTitleEnum GameTitle { get; init; }
-
+    
     public void Dispose(bool disposing) {
         if (!disposing) {
             return;
         }
-        
+
         // Release managed resources here
     }
 

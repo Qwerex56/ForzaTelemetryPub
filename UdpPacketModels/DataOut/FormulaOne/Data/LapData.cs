@@ -1,0 +1,26 @@
+﻿namespace ForzaTelemetry.ForzaModels.DataOut.FormulaOne.Data;
+
+public record LapData(
+    uint LastLapTimeInMs,
+    uint CurrentLapTimeInMs,
+    short Sector1TimeInMs,
+    short Sector2TimeInMs,
+    float LapDistance,
+    float TotalDistance,
+    float SafetyCarDelta,
+    byte CarPosition,
+    byte CurrentLapNum,
+    byte PitStatus,
+    byte NumPitStops,
+    byte Sector,
+    byte CurrentLapInvalid,
+    byte Penalties,
+    byte Warnings,
+    byte NumUnservedDriveThroughPens,
+    byte NumUnservedStopAndGoPens,
+    byte GridPosition,
+    byte ResultStatus,
+    byte PitLaneTimerActive,
+    ushort PitLaneTimeInLaneInMs,
+    ushort PitStopTimerInMs,
+    byte PitShouldServePen);

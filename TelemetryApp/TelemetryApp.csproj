@@ -11,4 +11,9 @@
       <ProjectReference Include="..\UdpListenerService\UdpListenerService.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="ScottPlot" Version="5.0.36" />
+      <PackageReference Include="ScottPlot.Blazor" Version="5.0.36" />
+    </ItemGroup>
+
 </Project>
