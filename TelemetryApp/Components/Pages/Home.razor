@@ -3,11 +3,17 @@
 
 @using ForzaTelemetry.ForzaModels.DataAnalyzers
 @using ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport
-@using ForzaTelemetry.ForzaModels.Interfaces
+@using ForzaTelemetry.ForzaModels.DataOut.Interfaces
 @using ForzaTelemetry.ForzaModels.RaceDataModels
-@using UdpListenerService.Listeners
 
-@inject FmFhListener listener
+@using Plotly.Blazor
+@using Plotly.Blazor.ConfigLib
+@using Plotly.Blazor.Traces
+@using Plotly.Blazor.Traces.ScatterLib
+@using TelemetryApp.Classes
+@using TelemetryApp.Controllers
+
+@inject UdpOptions Configuration
 
 @rendermode InteractiveServer
 
@@ -17,100 +23,107 @@
 
 Welcome to your new app.
 
-@if (!listener.IsListening) {
-    <button @onclick="OpenListener">
-        Start recording
-    </button>
-} else {
-    <button @onclick="() => { listener.StopListening(); }">
-        End Listening
-    </button>
+Port: @Configuration.IpAddress;
+
+@if (_listener is not null) {
+    @if (!_listener.IsListening) {
+        <button @onclick="OpenListener">
+            Start recording
+        </button>
+    } else {
+        <button @onclick="() => { _listener.StopListening(); }">
+            End Listening
+        </button>
+    }
 }
 
-@if (_fm8DataOutDashes.Count > 0) {
-    <div>
-        @foreach (var tireData in _fm8DataOutDashes.LastOrDefault(new Fm8DataOutDash()).GetTiresData()) {
-            <p>Tire Data</p>
-            <div>
-                <p>Temperature: @tireData.Temperature</p>
-                <p>Wear: @tireData.Wear</p>
-            </div>
-        }
-    </div>
-}
-
-    <div>
-        On throttle time: @_steerAnalyzer.OnThrottleTimePercentage()%
-    </div>
-    <div>
-        On brake time: @_steerAnalyzer.OnBrakeTimePercentage()%
-    </div>
-    <div>
-        On off throttle time: @_steerAnalyzer.OffThrottleTimePercentage()%
-    </div>
-
-Hello World
-
+<div>
+    plotly:
+    <PlotlyChart @bind-Config="_config"
+                 @bind-Layout="_layout"
+                 @bind-Data="_data"
+                 @ref="_chart" />
+</div>
 
 @code {
-    private readonly List<Fm8DataOutDash> _fm8DataOutDashes = [];
-    private readonly SteerAnalyzer _steerAnalyzer = new();
+    private FmFhListener? _listener = null;
     private readonly CarTelemetryAnalyzer _telemetryAnalyzer = new();
     private ushort _lapNumber;
-    
+
+    private PlotlyChart _chart = new();
+    private Config _config = new();
+    private Layout _layout = new();
+    private IList<ITrace> _data = [];
+
     private ushort LapNumber {
         get => _lapNumber;
         set {
             if (value <= _lapNumber) return;
-            
-            Console.WriteLine("New Lap");
-            _steerAnalyzer.SaveLapSteerAndReset();
 
-            _telemetryAnalyzer.SpeedChart();
-            _telemetryAnalyzer.FlushSamples();
-            
+            _data = _telemetryAnalyzer.SpeedChart();
+            _chart.React();
+
+            SessionDataSingleton.FlushSamples();
+
             _lapNumber = value;
         }
+    }
+
+    protected override void OnInitialized() {
+        _config = new() {
+            Responsive = true,
+            DisplayModeBar = DisplayModeBarEnum.False,
+            Editable = false,
+        };
+
+        _layout = new() {
+            Title = new() {
+                Text = "Speed chart"
+            },
+        };
+
+        _data = [
+            new Scatter {
+                Name = "Scatter trace",
+                Mode = ModeFlag.Lines,
+                X = [],
+                Y = []
+            }
+        ];
+
+        _listener = new(Configuration);
+        base.OnInitialized();
     }
 
     protected override bool ShouldRender() => true;
 
     private void OpenListener() {
-        if (listener.IsListening) return;
+        if (_listener.IsListening) return;
 
         // Add events
 
-        listener.OnPacketFormatted += CollectReceivedPackets;
+        _listener.OnPacketFormatted += CollectReceivedPackets;
 
-        // Start listener
-        Task.Run(() => listener.StartListening());
+        // Start _listener
+        Task.Run(() => _listener.StartListening());
 
-        Console.WriteLine("Opened listener");
-    }
-
-    private void CollectReceivedPackets(byte[] _, IDataOut dataOut) {
-        if (dataOut is not Fm8DataOutDash fm8DataOut) return;
-        if (fm8DataOut.IsRaceOn == 0) return;
-
-        _fm8DataOutDashes.Add(fm8DataOut);
-        
-        LapNumber = fm8DataOut.LapNumber;
-        
-        var sample = new CarTelemetryData((ushort)fm8DataOut.Speed, 
-            fm8DataOut.Accel, 
-            fm8DataOut.Steer, 
-            fm8DataOut.Brake, 
-            fm8DataOut.Clutch, 
-            (sbyte)fm8DataOut.Gear, 
-            (ushort)fm8DataOut.CurrentEngineRpm);
-        _steerAnalyzer.AddSample(sample);
-        _telemetryAnalyzer.AddSample(sample);
-
+        Console.WriteLine("Opened _listener");
         InvokeAsync(StateHasChanged);
     }
 
+    private void CollectReceivedPackets(IDataOut dataOut) {
+        if (dataOut is not Fm8DataOutDash fm8DataOut) return;
+        if (fm8DataOut.IsRaceOn == 0) return;
+
+        SessionDataSingleton.Instance.AddSample(fm8DataOut.GetCarTelemetryData());
+        // _telemetryAnalyzer.UpdateSpeedChart(ref _data);
+        // _data = _telemetryAnalyzer.SpeedChart();
+
+        LapNumber = fm8DataOut.LapNumber;
+     }
+
     public void Dispose() {
-        listener.OnPacketFormatted -= CollectReceivedPackets;
+        _listener.OnPacketFormatted -= CollectReceivedPackets;
     }
 
 }

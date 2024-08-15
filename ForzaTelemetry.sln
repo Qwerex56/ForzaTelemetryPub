@@ -6,10 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelemetryApp", "TelemetryAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForzaTelemetryUnitTests", "ForzaTelemetryUnitTests\ForzaTelemetryUnitTests.csproj", "{50C7847E-EA29-4159-A963-385E69BA1ED1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpListenerService", "UdpListenerService\UdpListenerService.csproj", "{1A7CA392-A319-4F36-A316-0BDA07A5B760}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpDbModels", "UdpDbModels\UdpDbModels.csproj", "{A29941B1-E348-4493-880C-AC5971238ACF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,13 +24,5 @@ Global
 		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50C7847E-EA29-4159-A963-385E69BA1ED1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A7CA392-A319-4F36-A316-0BDA07A5B760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A7CA392-A319-4F36-A316-0BDA07A5B760}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A7CA392-A319-4F36-A316-0BDA07A5B760}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A7CA392-A319-4F36-A316-0BDA07A5B760}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A29941B1-E348-4493-880C-AC5971238ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A29941B1-E348-4493-880C-AC5971238ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A29941B1-E348-4493-880C-AC5971238ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A29941B1-E348-4493-880C-AC5971238ACF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

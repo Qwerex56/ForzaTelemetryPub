@@ -3,17 +3,18 @@ using ForzaTelemetry.ForzaModels.RaceDataModels.Interfaces;
 
 namespace ForzaTelemetry.ForzaModels.RaceDataModels;
 
-// TODO: Add model values
-public record StintData(
-    byte? TyreCompound,
-    byte? EndLap) : IRaceData, IDisposable {
+public record TrackDataSample(
+    int? TrackId = null,
+    float? TrackLength = null,
+    float? SessionTime = null,
+    ushort? LapNumber = null) : IRaceDataSample {
     public RacingGameTitleEnum GameTitle { get; init; }
-    
+
     public void Dispose(bool disposing) {
         if (!disposing) {
             return;
         }
-
+    
         // Release managed resources here
     }
 
@@ -21,4 +22,4 @@ public record StintData(
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-}
+};

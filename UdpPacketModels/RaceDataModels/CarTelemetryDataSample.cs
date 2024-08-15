@@ -3,26 +3,24 @@ using ForzaTelemetry.ForzaModels.RaceDataModels.Interfaces;
 
 namespace ForzaTelemetry.ForzaModels.RaceDataModels;
 
-public record LapData(
-    float? DistanceTraveled,
-    float? BestLapTime,
-    float? LastLapTime,
-    float? CurrentLapTime,
-    float? RaceTime,
-    ushort? LapNumber,
-    byte? CurrentPosition) : IRaceData, IDisposable {
+public record CarTelemetryDataSample(
+    ushort? Speed = null,
+    float? Throttle = null,
+    float? Steer = null,
+    float? Brake = null,
+    byte? Clutch = null,
+    sbyte? Gear = null,
+    ushort? EngineRpm = null) : IRaceDataSample {
     public RacingGameTitleEnum GameTitle { get; init; }
 
     public void Dispose(bool disposing) {
         if (!disposing) {
             return;
         }
-        
-        // Release managed resources here
     }
-
+    
     public void Dispose() {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-};
+}

@@ -1,4 +1,4 @@
-﻿using ForzaTelemetry.ForzaModels.Interfaces;
+﻿using ForzaTelemetry.ForzaModels.DataOut.Interfaces;
 using ForzaTelemetry.ForzaModels.RaceDataModels;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -7,11 +7,11 @@ namespace ForzaTelemetry.ForzaModels.DataOut.ForzaMotorsport;
 
 public class Fm8DataOutDash : IDataOut {
     public int IsRaceOn { get; init; }
-    public uint TimestampMs { get; init; }
+    public uint SessionTimeMs { get; init; }
     public float EngineMaxRpm { get; init; }
     public float EngineIdleRpm { get; init; }
     public float CurrentEngineRpm { get; init; }
-    
+
     public float AccelerationX { get; init; }
     public float AccelerationY { get; init; }
     public float AccelerationZ { get; init; }
@@ -105,7 +105,7 @@ public class Fm8DataOutDash : IDataOut {
     public ushort LapNumber { get; init; }
     public byte RacePosition { get; init; }
 
-    public byte Accel { get; init; }
+    public byte Throttle { get; init; }
     public byte Brake { get; init; }
     public byte Clutch { get; init; }
     public byte HandBrake { get; init; }
@@ -122,7 +122,26 @@ public class Fm8DataOutDash : IDataOut {
 
     public int TrackId { get; init; }
 
-    public LapData GetLapData() => new(
+    public CarMotionDataSample GetCarMotionData() => new(
+        WorldPosition: new(PositionX, PositionY, PositionZ),
+        Acceleration: new(AccelerationX, AccelerationY, AccelerationY),
+        Velocity: new(VelocityX, VelocityY, VelocityZ),
+        AngularVelocity: new(AngularVelocityX, AngularVelocityY, AngularVelocityZ),
+        Yaw, Pitch, Roll,
+        null, null, null
+    );
+
+    public CarTelemetryDataSample GetCarTelemetryData() => new(
+        (ushort)Speed,
+        (float)Throttle,
+        (float)Steer,
+        (float)Brake,
+        (byte)Clutch,
+        (sbyte)Gear,
+        (ushort?)CurrentEngineRpm
+    );
+
+    public LapDataSample GetLapData() => new(
         DistanceTraveled,
         BestLap,
         LastLap,
@@ -131,41 +150,69 @@ public class Fm8DataOutDash : IDataOut {
         LapNumber,
         RacePosition);
 
-    public TireData[] GetTiresData() => [
-        new(TireSlipRatioFl,
-            TireSlipAngleFl,
-            TireCombinedSlipFl,
-            TireTemperatureFl,
-            TireWearFl),
-        new(TireSlipRatioFr,
-            TireSlipAngleFr,
-            TireCombinedSlipFr,
-            TireTemperatureFr,
-            TireWearFr),
-        new(TireSlipRatioRl,
-            TireSlipAngleRl,
-            TireCombinedSlipRl,
-            TireTemperatureRl,
-            TireWearRl),
-        new(TireSlipRatioRr,
-            TireSlipAngleRr,
-            TireCombinedSlipRr,
-            TireTemperatureRr,
-            TireWearRr)
-    ];
+    public StintDataSample GetStintData() => new(
+        null,
+        (byte)LapNumber
+    );
 
-    public WheelData[] GetWheelsData() => [
-        new(WheelRotationSpeedFl,
+    public TireDataSample GetTiresData() => new(
+        [
+            TireSlipRatioFl,
+            TireSlipRatioFr,
+            TireSlipRatioRl,
+            TireSlipRatioRr,
+        ],
+        [
+            TireSlipAngleFl,
+            TireSlipAngleFr,
+            TireSlipAngleRl,
+            TireSlipAngleRr,
+        ],
+        [
+            TireCombinedSlipFl,
+            TireCombinedSlipFr,
+            TireCombinedSlipRl,
+            TireCombinedSlipRr,
+        ],
+        [
+            TireTemperatureFl,
+            TireTemperatureFr,
+            TireTemperatureRl,
+            TireTemperatureRr,
+        ],
+        [
+            TireWearFl,
+            TireWearFr,
+            TireWearRl,
+            TireWearRr
+        ]
+    );
+
+    public TrackDataSample GetTrackData() => new(
+        TrackId,
+        null,
+        SessionTimeMs,
+        LapNumber
+    );
+
+    public WheelDataSample GetWheelsData() => new(
+        [
+            WheelRotationSpeedFl,
+            WheelRotationSpeedFr,
+            WheelRotationSpeedRl,
+            WheelRotationSpeedRr,
+        ],
+        [
             WheelOnRumbleStripFl,
-            WheelInPuddleDepthFl),
-        new(WheelRotationSpeedFr,
             WheelOnRumbleStripFr,
-            WheelInPuddleDepthFr),
-        new(WheelRotationSpeedRl,
             WheelOnRumbleStripRl,
-            WheelInPuddleDepthRl),
-        new(WheelRotationSpeedRr,
             WheelOnRumbleStripRr,
-            WheelInPuddleDepthRr)
-    ];
+        ],
+        [
+            WheelInPuddleDepthFl,
+            WheelInPuddleDepthFr,
+            WheelInPuddleDepthRl,
+            WheelInPuddleDepthRr
+        ]
+    );
 }

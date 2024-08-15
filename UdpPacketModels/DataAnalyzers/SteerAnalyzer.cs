@@ -13,22 +13,22 @@ public sealed class SteerAnalyzer {
         List<(uint samplesInLap, float onThrottleTimeInLap, float offThrottleTimeInLap, float onBrakeTimeInLap)>
         _perLapSteerAnalyze = [];
 
-    public void AddSample(CarTelemetryData carTelemetryData) {
-        // ArgumentNullException.ThrowIfNull(carTelemetryData.Brake);
-        // ArgumentNullException.ThrowIfNull(carTelemetryData.Throttle);
+    public void AddSample(CarTelemetryDataSample carTelemetryDataSample) {
+        // ArgumentNullException.ThrowIfNull(carTelemetryDataSample.Brake);
+        // ArgumentNullException.ThrowIfNull(carTelemetryDataSample.Throttle);
 
-        if (carTelemetryData.Brake is null) return;
-        if (carTelemetryData.Throttle is null) return;
+        if (carTelemetryDataSample.Brake is null) return;
+        if (carTelemetryDataSample.Throttle is null) return;
 
         _samplesCount += 1;
 
-        if (carTelemetryData.Brake > 0) {
+        if (carTelemetryDataSample.Brake > 0) {
             _onBrakeTime += 1;
 
             return;
         }
 
-        if (carTelemetryData.Throttle > 0) {
+        if (carTelemetryDataSample.Throttle > 0) {
             _onThrottleTime += 1;
 
             return;

@@ -96,7 +96,7 @@ public static class ForzaPacketParser {
         
         return new() {
             IsRaceOn    = bytes.ReadInt32(ref cursor),
-            TimestampMs = bytes.ReadUInt32(ref cursor),
+            SessionTimeMs = bytes.ReadUInt32(ref cursor),
             
             EngineMaxRpm     = bytes.ReadSingle(ref cursor),
             EngineIdleRpm    = bytes.ReadSingle(ref cursor),
@@ -195,7 +195,7 @@ public static class ForzaPacketParser {
             LapNumber = bytes.ReadUInt16(ref cursor),
             RacePosition = bytes.ReadUInt8(ref cursor),
             
-            Accel = bytes.ReadUInt8(ref cursor),
+            Throttle = bytes.ReadUInt8(ref cursor),
             Brake = bytes.ReadUInt8(ref cursor),
             Clutch = bytes.ReadUInt8(ref cursor),
             HandBrake = bytes.ReadUInt8(ref cursor),

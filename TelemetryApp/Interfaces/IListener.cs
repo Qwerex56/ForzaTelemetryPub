@@ -1,10 +1,10 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using ForzaTelemetry.ForzaModels.Interfaces;
+using ForzaTelemetry.ForzaModels.DataOut.Interfaces;
 
 namespace UdpListenerService.Interfaces;
 
-public interface IListenerHostedService : IHostedService {
+public interface IListener {
     #region Events
 
     /// <summary>
@@ -26,7 +26,7 @@ public interface IListenerHostedService : IHostedService {
     /// <summary>
     /// 
     /// </summary>
-    public event Action<byte[], IDataOut>? OnPacketFormatted;
+    public event Action<IDataOut>? OnPacketFormatted;
 
     /// <summary>
     /// 
@@ -54,19 +54,23 @@ public interface IListenerHostedService : IHostedService {
     /// <summary>
     /// Sends the empty message on any IP address
     /// </summary>
-    private static void SendEndingPacket(int port) {
-        var udpServer = new UdpClient();
-
+    protected static void SendEndingPacket(IPAddress address, int port) {
+        var udpServer = new UdpClient(port);
+        var endpoint = new IPEndPoint(address, port);
+        
         try {
-            udpServer.Connect(IPAddress.Any, port);
+            udpServer.Connect(endpoint);
 
+            Console.WriteLine("Hello");
             udpServer.Send([0], 1);
+            Console.WriteLine("Bye");
         } catch (Exception e) {
             Console.WriteLine(e);
 
             throw;
         } finally {
             udpServer.Close();
+            Console.WriteLine("Closed");
         }
     }
 }

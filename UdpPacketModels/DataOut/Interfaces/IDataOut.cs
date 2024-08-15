@@ -1,13 +1,19 @@
 ﻿using ForzaTelemetry.ForzaModels.RaceDataModels;
 
-namespace ForzaTelemetry.ForzaModels.Interfaces;
+namespace ForzaTelemetry.ForzaModels.DataOut.Interfaces;
 
 public interface IDataOut {
-    public LapData GetLapData();
+    public CarMotionDataSample GetCarMotionData();
 
-    public TireData[] GetTiresData();
+    public CarTelemetryDataSample GetCarTelemetryData();
+    
+    public LapDataSample GetLapData();
 
-    public WheelData[] GetWheelsData();
+    public StintDataSample GetStintData();
     
+    public TireDataSample GetTiresData();
+
+    public TrackDataSample GetTrackData();
     
+    public WheelDataSample GetWheelsData();
 }

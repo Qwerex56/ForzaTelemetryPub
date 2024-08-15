@@ -1,7 +1,5 @@
-using TelemetryApp;
+using TelemetryApp.Classes;
 using TelemetryApp.Components;
-using UdpListenerService.Listeners;
-using UdpListenerService.UdpSettings;
 
 // using Microsoft.EntityFrameworkCore;
 // using UdpDbModels;
@@ -14,14 +12,11 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddMvc();
 
-builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
-builder.Configuration.AddJsonFile("./ForzaUdpSettings.json", true, true);
+var udpOptions = new UdpOptions();
+builder.Configuration.Bind(UdpOptions.ForzaConnection, udpOptions);
+builder.Services.AddSingleton(udpOptions);
 
 builder.Services.AddOptions();
-builder.Services.Configure<ForzaUdpSettings>(builder.Configuration.GetSection("ForzaUdpSettings"));
-
-builder.Services.AddSingleton<FmFhListener>();
-builder.Services.AddHostedService(sp => sp.GetRequiredService<FmFhListener>());
 
 // var connectionString = builder.Configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>();
 // builder.Services.AddDbContext<ForzaTelemetryContext>(optionsBuilder =>
@@ -32,7 +27,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment()) {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios,
+    // see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

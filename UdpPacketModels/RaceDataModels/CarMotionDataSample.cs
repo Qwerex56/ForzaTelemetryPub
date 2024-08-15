@@ -4,20 +4,20 @@ using ForzaTelemetry.ForzaModels.RaceDataModels.Interfaces;
 
 namespace ForzaTelemetry.ForzaModels.RaceDataModels;
 
-public record CarMotionData(
-    Vector3? WorldPosition,
-    Vector3? Acceleration,
-    Vector3? Velocity,
-    Vector3? AngularVelocity,
+public record CarMotionDataSample(
+    Vector3? WorldPosition = null,
+    Vector3? Acceleration = null,
+    Vector3? Velocity = null,
+    Vector3? AngularVelocity = null,
     // Vector3? ForwardDirection,
     // Vector3? RightDirection,
-    float? Yaw,
-    float? Pitch,
-    float? Roll,
-    float? GForceLateral,
-    float? GForceLongitudinal,
-    float? GForceVertical
-    ) : IRaceData, IDisposable {
+    float? Yaw = null,
+    float? Pitch = null,
+    float? Roll = null,
+    float? GForceLateral = null,
+    float? GForceLongitudinal = null,
+    float? GForceVertical = null
+    ) : IRaceDataSample {
     public RacingGameTitleEnum GameTitle { get; init; }
 
     public void Dispose(bool disposing) {
